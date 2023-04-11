@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 find_package(control_msgs)
 find_package(moveit_visual_tools REQUIRED)
 find_package(moveit_servo REQUIRED)
-find_package(unity_robotics_demo_msgs REQUIRED)
+find_package(manipulator_vr_teleop_interface REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -25,7 +25,6 @@ target_compile_features(eff_cmd PUBLIC c_std_99 cxx_std_17)  # Require C99 and C
 ament_target_dependencies(
   eff_cmd
   "moveit_ros_planning_interface"
-  "unity_robotics_demo_msgs"
   "rclcpp"
 )
 
@@ -37,7 +36,7 @@ target_compile_features(occulus_cmd PUBLIC c_std_99 cxx_std_17)  # Require C99 a
 ament_target_dependencies(
   occulus_cmd
   "moveit_ros_planning_interface"
-  "unity_robotics_demo_msgs"
+  "manipulator_vr_teleop_interface"
   "rclcpp"
 )
 
@@ -49,7 +48,7 @@ target_compile_features(occulus_direction PUBLIC c_std_99 cxx_std_17)  # Require
 ament_target_dependencies(
   occulus_direction
   "moveit_ros_planning_interface"
-  "unity_robotics_demo_msgs"
+  "manipulator_vr_teleop_interface"
   "rclcpp"
 )
 

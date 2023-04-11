@@ -1,5 +1,5 @@
 #include<rclcpp/rclcpp.hpp>
-#include<unity_robotics_demo_msgs/msg/pos_rot.hpp>
+#include <manipulator_vr_teleop_interface/msg/pos_rot.hpp>
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_broadcaster.h"
 #include <Eigen/Dense>
@@ -14,12 +14,12 @@ class QuestNode: public rclcpp::Node
 
             RCLCPP_INFO(rclcpp::get_logger(node_name), "QuestNode intialize");
             // Declare publisher
-            occulus_pose_sub_ = this->create_subscription<unity_robotics_demo_msgs::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
+            occulus_pose_sub_ = this->create_subscription<manipulator_vr_teleop_interface::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
             // TF broadcaster
             tf_broadcaster_= std::make_unique<tf2_ros::TransformBroadcaster>(*this);
         }
 
-        void topic_callback(const unity_robotics_demo_msgs::msg::PosRot & msg) {
+        void topic_callback(const manipulator_vr_teleop_interface::msg::PosRot & msg) {
             x_ref = x_origin + msg.pos_x;
             y_ref = y_origin + msg.pos_y;
             z_ref = z_origin + msg.pos_z;
@@ -67,10 +67,9 @@ class QuestNode: public rclcpp::Node
         }
 
     private:
-        rclcpp::Subscription<unity_robotics_demo_msgs::msg::PosRot>::SharedPtr occulus_pose_sub_;
+        rclcpp::Subscription<manipulator_vr_teleop_interface::msg::PosRot>::SharedPtr occulus_pose_sub_;
         rclcpp::TimerBase::SharedPtr timer_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-        float p = 10.0;
         float x_origin = 0.4;
         float y_origin= 0.0;
         float z_origin = 0.3;
