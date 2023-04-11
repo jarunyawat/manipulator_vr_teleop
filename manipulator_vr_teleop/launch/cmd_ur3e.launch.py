@@ -92,7 +92,7 @@ def generate_launch_description():
     robot_description = get_robot_description()
     robot_description_semantic = get_robot_description_semantic()
     demo_node = Node(
-        package="hello_moveit",
+        package="manipulator_vr_teleop",
         executable="eff_cmd",
         output="screen",
         parameters=[

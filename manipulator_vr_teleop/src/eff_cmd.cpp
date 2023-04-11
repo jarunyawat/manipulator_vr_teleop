@@ -102,8 +102,10 @@ int main(int argc, char** argv){
 
       return collision_wall;
     }();
+
     // Add the collision object to the scene
     planning_scene_interface.applyCollisionObject(collision_wall);
+
     // Create joint command
     robot_model_loader::RobotModelLoader robot_model_loader(node);
     const moveit::core::RobotModelPtr& kinematic_model = robot_model_loader.getModel();
