@@ -1,5 +1,5 @@
-#include <rclcpp/rclcpp.hpp>
-#include <manipulator_vr_teleop_interface/msg/pos_rot.hpp>
+#include<rclcpp/rclcpp.hpp>
+#include<unity_robotics_demo_msgs/msg/pos_rot.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include "std_msgs/msg/string.hpp"
@@ -22,22 +22,21 @@ class QuestNode: public rclcpp::Node
             RCLCPP_INFO(rclcpp::get_logger(node_name), "QuestNode intialize");
             // Declare publisher
             twist_cmd_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("servo_node/delta_twist_cmds", 10);
-            occulus_pose_sub_ = this->create_subscription<manipulator_vr_teleop_interface::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
+            occulus_pose_sub_ = this->create_subscription<unity_robotics_demo_msgs::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
             timer_ = this->create_wall_timer(10ms, std::bind(&QuestNode::publish_ref_pose, this));
             // TF listener
             tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
             tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
         }
 
-        void topic_callback(const manipulator_vr_teleop_interface::msg::PosRot & msg) {
+        void topic_callback(const unity_robotics_demo_msgs::msg::PosRot & msg) {
             x_ref = x_origin + msg.pos_x;
             y_ref = y_origin + msg.pos_y;
             z_ref = z_origin + msg.pos_z;
-            Eigen::Quaterniond q_oculus(msg.rot_w, msg.rot_y, msg.rot_z, msg.rot_x);
-            q_x = q_oculus.coeffs().x();
-            q_y = q_oculus.coeffs().y();
-            q_z = q_oculus.coeffs().z();
-            q_w = q_oculus.coeffs().w();
+            q_x = msg.rot_z;
+            q_y = msg.rot_x;
+            q_z = -msg.rot_y;
+            q_w = msg.rot_w;
         }
 
         void publish_ref_pose() {
@@ -82,7 +81,7 @@ class QuestNode: public rclcpp::Node
 
     private:
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_cmd_pub_;
-        rclcpp::Subscription<manipulator_vr_teleop_interface::msg::PosRot>::SharedPtr occulus_pose_sub_;
+        rclcpp::Subscription<unity_robotics_demo_msgs::msg::PosRot>::SharedPtr occulus_pose_sub_;
         rclcpp::TimerBase::SharedPtr timer_;
         std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
         std::unique_ptr<tf2_ros::Buffer> tf_buffer_;

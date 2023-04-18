@@ -1,5 +1,5 @@
 #include<rclcpp/rclcpp.hpp>
-#include <manipulator_vr_teleop_interface/msg/pos_rot.hpp>
+#include<unity_robotics_demo_msgs/msg/pos_rot.hpp>
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_broadcaster.h"
 #include <Eigen/Dense>
@@ -14,12 +14,12 @@ class QuestNode: public rclcpp::Node
 
             RCLCPP_INFO(rclcpp::get_logger(node_name), "QuestNode intialize");
             // Declare publisher
-            occulus_pose_sub_ = this->create_subscription<manipulator_vr_teleop_interface::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
+            occulus_pose_sub_ = this->create_subscription<unity_robotics_demo_msgs::msg::PosRot>("pos_rot", 10, std::bind(&QuestNode::topic_callback, this, _1));
             // TF broadcaster
             tf_broadcaster_= std::make_unique<tf2_ros::TransformBroadcaster>(*this);
         }
 
-        void topic_callback(const manipulator_vr_teleop_interface::msg::PosRot & msg) {
+        void topic_callback(const unity_robotics_demo_msgs::msg::PosRot & msg) {
             x_ref = x_origin + msg.pos_x;
             y_ref = y_origin + msg.pos_y;
             z_ref = z_origin + msg.pos_z;
@@ -29,17 +29,17 @@ class QuestNode: public rclcpp::Node
             // Eigen::Matrix3d R = Eigen::AngleAxisd(angle, axis).toRotationMatrix();
             // q = q * R;
             // q.normalize();
-            Eigen::Quaterniond q_oculus(msg.rot_w, msg.rot_y, msg.rot_z, msg.rot_x);
+            // Eigen::Quaterniond q_oculus(msg.rot_w, msg.rot_y, msg.rot_z, msg.rot_x);
             
-            q_x = q_oculus.coeffs().x();
-            q_y = q_oculus.coeffs().y();
-            q_z = q_oculus.coeffs().z();
-            q_w = q_oculus.coeffs().w();
+            // q_x = q_oculus.coeffs().x();
+            // q_y = q_oculus.coeffs().y();
+            // q_z = q_oculus.coeffs().z();
+            // q_w = q_oculus.coeffs().w();
             // RCLCPP_INFO(this->get_logger(), "x: %f y: %f z: %f w: %f",q_x,q_y,q_z,q_w);
-            // q_x = msg.rot_x;
-            // q_y = msg.rot_y;
-            // q_z = msg.rot_z;
-            // q_w = msg.rot_w;
+            q_x = msg.rot_z;
+            q_y = msg.rot_x;
+            q_z = -msg.rot_y;
+            q_w = msg.rot_w;
             geometry_msgs::msg::TransformStamped t;
 
             // Read message content and assign it to
@@ -67,9 +67,10 @@ class QuestNode: public rclcpp::Node
         }
 
     private:
-        rclcpp::Subscription<manipulator_vr_teleop_interface::msg::PosRot>::SharedPtr occulus_pose_sub_;
+        rclcpp::Subscription<unity_robotics_demo_msgs::msg::PosRot>::SharedPtr occulus_pose_sub_;
         rclcpp::TimerBase::SharedPtr timer_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+        // float p = 10.0;
         float x_origin = 0.4;
         float y_origin= 0.0;
         float z_origin = 0.3;
